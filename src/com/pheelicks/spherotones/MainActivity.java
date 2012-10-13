@@ -12,7 +12,8 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //        setContentView(R.layout.main);
-        startActivity(new Intent(this, CollisionsActivity.class));
+//        startActivity(new Intent(this, CollisionsActivity.class));
+        startActivity(new Intent(this, MusicActivity.class));
     }
 
     @Override
