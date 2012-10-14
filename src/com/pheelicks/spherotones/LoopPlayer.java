@@ -20,7 +20,7 @@ public class LoopPlayer {
 			AudioFormat.CHANNEL_CONFIGURATION_MONO,
 			AudioFormat.ENCODING_PCM_16BIT);
 	static final int LOOP_LENGTH = 8 * SAMPLE_RATE;
-	static final int BEAT_COUNT = 8;
+	static final int BEAT_COUNT = 12;
 	static final int HEADER_OFFSET = 0x2C;
 
 	byte[] mLoopBytes = new byte[LOOP_LENGTH];

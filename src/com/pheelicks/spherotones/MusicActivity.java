@@ -40,7 +40,7 @@ public class MusicActivity extends Activity {
 
 	private SampleManager sampleManager;
 	private LoopPlayer mLoopPlayer;
-	private int yaw = 0;
+	private int currentSampleNum = 0;
 	
 	/**
      * Data Streaming Packet Counts
@@ -69,33 +69,24 @@ public class MusicActivity extends Activity {
 		sampleManager.initSounds(this);
 		sampleManager.addSound(R.raw.castanet,		R.raw.castanet);
 		sampleManager.addSound(R.raw.clap,			R.raw.clap);
-		sampleManager.addSound(R.raw.drum_bass,		R.raw.drum_bass);
-		sampleManager.addSound(R.raw.drum_el,		R.raw.drum_el);
 		sampleManager.addSound(R.raw.drum_kick,		R.raw.drum_kick);
-		sampleManager.addSound(R.raw.hihat_medium,	R.raw.hihat_medium);
-		sampleManager.addSound(R.raw.hihat_quick,	R.raw.hihat_quick);
 		sampleManager.addSound(R.raw.hihat_slow,	R.raw.hihat_slow);
 		sampleManager.addSound(R.raw.maracas, 		R.raw.maracas);
 		sampleManager.addSound(R.raw.snarehit, 		R.raw.snarehit);
 		
-		soundColors = new int[10];
+		soundColors = new int[6];
 		soundColors[0] = Color.BLUE;
 		soundColors[1] = Color.GREEN;
 		soundColors[2] = Color.RED;
 		soundColors[3] = Color.WHITE;
 		soundColors[4] = Color.CYAN;
 		soundColors[5] = Color.YELLOW;
-		soundColors[6] = Color.MAGENTA;
-		soundColors[7] = Color.LTGRAY;
-		soundColors[8] = 0x34b876;
-		soundColors[9] = 0xd4b16f;
 		currentColor = 0;
 		//soundColors
 		
 		
 		mLoopPlayer = new LoopPlayer(this);
 		mLoopPlayer.start();
-		//mLoopPlayer.add(R.raw.clap, 1024)
 
 
 		mSpheroConnectionView = (SpheroConnectionView)findViewById(R.id.sphero_connection_view);
@@ -241,7 +232,6 @@ public class MusicActivity extends Activity {
 
 					//Iterate over each frame
 					AttitudeData attitude;
-					int newYaw = yaw;
 					for(DeviceSensorsData datum : data_list){
 
 						//Show attitude data
@@ -260,19 +250,17 @@ public class MusicActivity extends Activity {
                             mAccelerometerFilteredView.setY("" + accel.getFilteredAcceleration().y);
                             mAccelerometerFilteredView.setZ("" + accel.getFilteredAcceleration().z);
                         }*/
-						newYaw = attitude.getAttitudeSensor().yaw;
+						int yaw = attitude.getAttitudeSensor().yaw;
+						
+						int degRange = 360/soundColors.length;
+						int sampleNumber = (int)(((yaw + 360) % 360) / degRange) % soundColors.length; 
+						if (currentSampleNum != sampleNumber) 
+						{
+							sampleManager.setSample(sampleNumber);
+							updateColor(sampleNumber);
+							currentSampleNum = sampleNumber;
+						}
 					}
-					if (yaw / 30 > newYaw / 30) {
-						sampleManager.changeSample(1);
-						yaw = newYaw;
-						updateColor((currentColor + 1) % 10);
-					}
-					else if (yaw / 30 < newYaw / 30) {
-						sampleManager.changeSample(-1);
-						yaw = newYaw;
-						updateColor((currentColor + 9) % 10);
-					}
-					//yaw = attitude.getAttitudeSensor().yaw;
 				}
 			}			
 

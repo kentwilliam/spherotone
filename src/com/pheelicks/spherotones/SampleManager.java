@@ -65,6 +65,11 @@ public class SampleManager {
 		//currentSample = currentSampleIndex + by % mSoundPoolMap.size();
 		return currentSample;
 	}
+	
+	public void setSample(int s)
+	{
+		currentSample = mAvailableSounds.get(s);	
+	}
 
 	public void initSounds(Context theContext) { 
 		mContext = theContext;
