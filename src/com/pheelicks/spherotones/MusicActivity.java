@@ -1,5 +1,7 @@
 package com.pheelicks.spherotones;
 
+import com.pheelicks.spherotones.Track.onTriggerListener;
+
 import orbotix.robot.base.CollisionDetectedAsyncData;
 import orbotix.robot.base.ConfigureCollisionDetectionCommand;
 import orbotix.robot.base.DeviceAsyncData;
@@ -26,6 +28,7 @@ public class MusicActivity extends Activity {
     private SpheroConnectionView mSpheroConnectionView;
     
     private Handler mHandler = new Handler();
+    private Track mTrack;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -54,6 +57,15 @@ public class MusicActivity extends Activity {
 		sampleManager.playSound(R.raw.drum_kick);
 		sampleManager.playSound(R.raw.drum_kick);
 		sampleManager.playSound(R.raw.drum_kick);
+		
+		mTrack = new Track();
+		mTrack.start();
+		mTrack.setOnTriggerListener(new onTriggerListener() {
+			@Override
+			public void playSound(int soundId) {
+				sampleManager.playSound(soundId);
+			}
+		});
 
         mSpheroConnectionView = (SpheroConnectionView)findViewById(R.id.sphero_connection_view);
         // Set the connection event listener 
@@ -104,6 +116,8 @@ public class MusicActivity extends Activity {
 		
 		// Disconnect from the robot.
 		RobotProvider.getDefaultProvider().removeAllControls();
+		
+		mTrack.stop();
 	}
 	
 	private final AsyncDataListener mCollisionListener = new AsyncDataListener() {
@@ -121,19 +135,22 @@ public class MusicActivity extends Activity {
 				// Play sound
 				if(direction == Direction.LEFT)
 				{
-					Log.d(TAG, "CLAP");
+					mTrack.addSound(R.raw.clap);
 					sampleManager.playSound(R.raw.clap);
 				}
 				else if(direction == Direction.RIGHT)
 				{
+					mTrack.addSound(R.raw.drum_kick);
 					sampleManager.playSound(R.raw.drum_kick);
 				}
 				else if(direction == Direction.FORWARD)
 				{
+					mTrack.addSound(R.raw.maracas);
 					sampleManager.playSound(R.raw.maracas);
 				}
 				else if(direction == Direction.BACK)
 				{
+					mTrack.addSound(R.raw.hihat_slow);
 					sampleManager.playSound(R.raw.hihat_slow);
 				}
 			}

@@ -47,18 +47,18 @@ public class SampleManager {
 		if(mAvailableSounds.contains(index)){
 			Log.d(LOG_TAG, "contains");
 			int streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC); 
-			int soundId = mSoundPool.play(mSoundPoolMap.get(index), streamVolume, streamVolume, 1, 0, 1f);
+			int soundId = mSoundPool.play(mSoundPoolMap.get(index), streamVolume, streamVolume, 100, 0, 1f);
 
-			mKillSoundQueue.add(soundId);
-
-			// Play until 3 seconds have passed
-			mHandler.postDelayed(new Runnable() {
-				public void run() {
-					if(!mKillSoundQueue.isEmpty()){
-						mSoundPool.stop(mKillSoundQueue.firstElement());
-					}
-				}
-			}, 3000);
+//			mKillSoundQueue.add(soundId);
+//
+//			// Play until 3 seconds have passed
+//			mHandler.postDelayed(new Runnable() {
+//				public void run() {
+//					if(!mKillSoundQueue.isEmpty()){
+//						mSoundPool.stop(mKillSoundQueue.firstElement());
+//					}
+//				}
+//			}, 3000);
 		}
 	}
 }
