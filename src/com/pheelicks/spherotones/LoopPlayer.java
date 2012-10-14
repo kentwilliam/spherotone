@@ -3,8 +3,10 @@ package com.pheelicks.spherotones;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.SequenceInputStream;
 
 import android.content.Context;
+import android.content.res.Resources.NotFoundException;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
@@ -58,9 +60,7 @@ public class LoopPlayer {
 
 				if (soundId != -1)
 				{
-					audioStream = mContext.getResources().openRawResource(soundId);
-					audioStream.read(mHeaderDump, 0, HEADER_OFFSET);
-					audioStream.read(mLoopBytes, i * LOOP_LENGTH / BEAT_COUNT, LOOP_LENGTH / (2*BEAT_COUNT));
+					add(soundId, i * LOOP_LENGTH / BEAT_COUNT);
 				}
 			}
 
@@ -74,22 +74,52 @@ public class LoopPlayer {
 	
 	public void add(int resourceId, int offset)
 	{
-		int off = ((int)(SAMPLE_SIZE * SAMPLE_RATE * (System.currentTimeMillis() - mStartTime) / 1000) % LOOP_LENGTH);
-		InputStream audioStream = mContext.getResources().openRawResource(resourceId);
+		int off;
+		if(offset == -1)
+		{
+			off = ((int)(SAMPLE_SIZE * SAMPLE_RATE * (System.currentTimeMillis() - mStartTime) / 1000) % LOOP_LENGTH);
+		}
+		else
+		{
+			off = offset;
+		}
 		
+		InputStream audioStream = null;
+		try
+		{
+			audioStream = mContext.getResources().openRawResource(resourceId);
+			audioStream.read(mHeaderDump, 0, HEADER_OFFSET);
+
+		}
+		catch (NotFoundException e)
+		{
+			Log.e(TAG, "Could not find resource with id: " + resourceId);
+			return;
+		} 
+		catch (IOException e1) {
+			e1.printStackTrace();
+		}
+
 		// Quantize
 		off = (LOOP_LENGTH / BEAT_COUNT) * (off / (LOOP_LENGTH / BEAT_COUNT));
 		Log.d(TAG, "Adding sound " + resourceId + " with offset " + off);
 		
-		try 
+		// Mix in to existing audio data
+		try
 		{
-			int bytesRead = audioStream.read(mLoopBytes, off, 4096);
-			Log.d(TAG, "Read bytes: " + bytesRead);
-		} 
+			for (int i = 0; true; i++) {
+
+				int a = audioStream.read();
+				if(a == -1)break;
+				int b = mLoopBytes[(off + i) % LOOP_LENGTH];
+				int c = a + b - (a * b)/256;
+				mLoopBytes[(off + i) % LOOP_LENGTH] = (byte) c;
+			}
+		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
-		}
+		}	
 	}
 
 	public void start() {

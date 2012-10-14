@@ -197,7 +197,7 @@ public class MusicActivity extends Activity {
 
 				sampleManager.playCurrentSample(volume); //volume
 				
-				mLoopPlayer.add(sampleManager.getCurrentSample(), 0);
+				mLoopPlayer.add(sampleManager.getCurrentSample(), -1);
 
 				//sampleManager.playSound(R.raw.drum_bass, volume);
 				/*
