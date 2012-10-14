@@ -1,7 +1,6 @@
 package com.pheelicks.spherotones;
 
 import java.util.List;
-import java.util.Vector;
 
 import orbotix.robot.base.CollisionDetectedAsyncData;
 import orbotix.robot.base.CollisionDetectedAsyncData.CollisionPower;
@@ -11,9 +10,9 @@ import orbotix.robot.base.DeviceMessenger;
 import orbotix.robot.base.DeviceMessenger.AsyncDataListener;
 import orbotix.robot.base.DeviceSensorsAsyncData;
 import orbotix.robot.base.FrontLEDOutputCommand;
+import orbotix.robot.base.RGBLEDOutputCommand;
 import orbotix.robot.base.Robot;
 import orbotix.robot.base.RobotProvider;
-import orbotix.robot.base.RGBLEDOutputCommand;
 import orbotix.robot.base.SetDataStreamingCommand;
 import orbotix.robot.base.StabilizationCommand;
 import orbotix.robot.sensor.Acceleration;
@@ -27,12 +26,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class MusicActivity extends Activity {
 	private static final String TAG = "MusicActivity";
 
-	private TextView mTestLabel;
+	//private TextView mTestLabel;
+	//private ImageView instrumentPreview;
 	private Robot mRobot;	
 	private SpheroConnectionView mSpheroConnectionView;
 
@@ -57,11 +58,12 @@ public class MusicActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.music);
+		setContentView(R.layout.main);
 
+		/*
 		mTestLabel = (TextView) findViewById(R.id.test_label);
 		mTestLabel.setText("Hi!");
-
+		 */
 		// Set up samples
 		
 		
@@ -83,7 +85,6 @@ public class MusicActivity extends Activity {
 		soundColors[5] = Color.YELLOW;
 		currentColor = 0;
 		//soundColors
-		
 		
 		mLoopPlayer = new LoopPlayer(this);
 		mLoopPlayer.start();
@@ -190,24 +191,10 @@ public class MusicActivity extends Activity {
 				
 				mLoopPlayer.add(sampleManager.getCurrentSample(), -1);
 
-				//sampleManager.playSound(R.raw.drum_bass, volume);
 				/*
-				// Play sound
 				if(direction == Direction.LEFT)
 				{
 					sampleManager.playSound(R.raw.clap, volume);
-				}
-				else if(direction == Direction.RIGHT)
-				{
-					sampleManager.playSound(R.raw.drum_kick, volume);
-				}
-				else if(direction == Direction.FORWARD)
-				{
-					sampleManager.playSound(R.raw.maracas, volume);
-				}
-				else if(direction == Direction.BACK)
-				{
-					sampleManager.playSound(R.raw.castanet, volume);
 				}*/
 
 				text1 += direction.description + "\n";
@@ -242,14 +229,6 @@ public class MusicActivity extends Activity {
 							text2 += "yaw: " 	+ attitude.getAttitudeSensor().yaw   + "\n";
 						}
 
-						/*
-                        //Show accelerometer data
-                        AccelerometerData accel = datum.getAccelerometerData();
-                        if(attitude != null){
-                            mAccelerometerFilteredView.setX(""+accel.getFilteredAcceleration().x);
-                            mAccelerometerFilteredView.setY("" + accel.getFilteredAcceleration().y);
-                            mAccelerometerFilteredView.setZ("" + accel.getFilteredAcceleration().z);
-                        }*/
 						int yaw = attitude.getAttitudeSensor().yaw;
 						
 						int degRange = 360/soundColors.length;
@@ -259,12 +238,40 @@ public class MusicActivity extends Activity {
 							sampleManager.setSample(sampleNumber);
 							updateColor(sampleNumber);
 							currentSampleNum = sampleNumber;
+							
+							updateInstrumentPreview(sampleNumber);
 						}
 					}
 				}
 			}			
 
-			mTestLabel.setText(text1 + text2);
+			//mTestLabel.setText(text1 + text2);
+		}
+
+		private void updateInstrumentPreview(int sampleNumber) {
+	//		String instrument = "";
+			ImageView i = (ImageView)findViewById(R.id.imageView1);
+			switch (sampleNumber) {
+			case 0:
+				i.setImageResource(R.drawable.castanet);
+				break;
+			case 1:
+				i.setImageResource(R.drawable.clap);
+				break;
+			case 2:
+				i.setImageResource(R.drawable.drum_kick);
+				break;
+			case 3:
+				i.setImageResource(R.drawable.hihat_slow);
+				break;
+			case 4:
+				i.setImageResource(R.drawable.maracas);
+				break;
+			case 5:
+				i.setImageResource(R.drawable.snarehit);
+				break;
+			}
+			
 		}
 	};
 
