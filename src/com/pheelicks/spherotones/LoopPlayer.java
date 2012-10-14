@@ -76,6 +76,8 @@ public class LoopPlayer {
 		int off = ((int)(SAMPLE_SIZE * SAMPLE_RATE * (System.currentTimeMillis() - mStartTime) / 1000) % LOOP_LENGTH);
 		InputStream audioStream = mContext.getResources().openRawResource(resourceId);
 		
+		// Quantize
+		off = (LOOP_LENGTH / BEAT_COUNT) * (off / (LOOP_LENGTH / BEAT_COUNT));
 		Log.d(TAG, "Adding sound " + resourceId + " with offset " + off);
 		
 		try 
