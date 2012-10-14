@@ -17,7 +17,8 @@ public class LoopPlayer {
 	static final int BUF_SIZE = AudioTrack.getMinBufferSize(SAMPLE_RATE,
 			AudioFormat.CHANNEL_CONFIGURATION_MONO,
 			AudioFormat.ENCODING_PCM_16BIT);
-	static final int LOOP_LENGTH = 64 * SAMPLE_RATE;
+	static final int LOOP_LENGTH = 8 * SAMPLE_RATE;
+	static final int BEAT_COUNT = 8;
 	static final int HEADER_OFFSET = 0x2C;
 
 	byte[] mLoopBytes = new byte[LOOP_LENGTH];
@@ -35,27 +36,30 @@ public class LoopPlayer {
 		try 
 		{
 			audioStream.read(mLoopBytes, 0, HEADER_OFFSET);
-			int c = 128;
-			for (int i = 1; i < c; i++) {
-				int soundId;
-				if (i % 8 == 0 || i % 16 == 10 || i % 16 == 11) 
-				{
-					soundId = R.raw.drum_kick;
-				}
-				else if (i % 8 == 4) 
-				{
-					soundId = R.raw.snarehit;
-				} 
-				else 
-				{
+			for (int i = 0; i < BEAT_COUNT; i++) {
+				int soundId = -1;
+//				if (i % 8 == 0 || i % 16 == 10 || i % 16 == 11) 
+//				{
+//					soundId = R.raw.drum_kick;
+//				}
+//				else if (i % 8 == 4) 
+//				{
+//					soundId = R.raw.snarehit;
+//				} 
 					soundId = R.raw.hihat_quick;
-				}
+
+					
+					if(i == 0)
+					{
+						soundId = R.raw.drum_kick;
+
+					}
 
 				if (soundId != -1)
 				{
 					audioStream = mContext.getResources().openRawResource(soundId);
 					audioStream.read(mHeaderDump, 0, HEADER_OFFSET);
-					audioStream.read(mLoopBytes, i * LOOP_LENGTH / c, LOOP_LENGTH / (2*c));
+					audioStream.read(mLoopBytes, i * LOOP_LENGTH / BEAT_COUNT, LOOP_LENGTH / (2*BEAT_COUNT));
 				}
 			}
 
@@ -69,12 +73,15 @@ public class LoopPlayer {
 	
 	public void add(int resourceId, int offset)
 	{
-		int off = (int)(SAMPLE_SIZE * SAMPLE_RATE * (System.currentTimeMillis() - mStartTime) / 1000);
-		
+		int off = ((int)(SAMPLE_SIZE * SAMPLE_RATE * (System.currentTimeMillis() - mStartTime) / 1000) % LOOP_LENGTH);
 		InputStream audioStream = mContext.getResources().openRawResource(resourceId);
+		
+		Log.d(TAG, "Adding sound " + resourceId + " with offset " + off);
+		
 		try 
 		{
-			audioStream.read(mLoopBytes, off, 4096);
+			int bytesRead = audioStream.read(mLoopBytes, off, 4096);
+			Log.d(TAG, "Read bytes: " + bytesRead);
 		} 
 		catch (IOException e)
 		{
