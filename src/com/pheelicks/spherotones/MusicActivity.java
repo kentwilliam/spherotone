@@ -95,7 +95,7 @@ public class MusicActivity extends Activity {
 		
 		mLoopPlayer = new LoopPlayer(this);
 		mLoopPlayer.start();
-//		mLoopPlayer.add(R.raw.clap, 1024);
+		//mLoopPlayer.add(R.raw.clap, 1024)
 
 
 		mSpheroConnectionView = (SpheroConnectionView)findViewById(R.id.sphero_connection_view);
@@ -132,16 +132,12 @@ public class MusicActivity extends Activity {
 
 						//Configure
 						ConfigureCollisionDetectionCommand.sendCommand(mRobot, ConfigureCollisionDetectionCommand.DEFAULT_DETECTION_METHOD,
-								10,
-								10,
-								10,
-								10,
-								30);
+								15,
+								15,
+								15,
+								15,
+								20);
 
-						// register the async data listener
-						//                        DeviceMessenger.getInstance().addAsyncDataListener(mRobot, mDataListener);
-						//                      // Start streaming data
-						//                    requestDataStreaming();
 						requestDataStreaming();
 					}
 				}, 1000);
@@ -193,19 +189,15 @@ public class MusicActivity extends Activity {
 				if (cPower.y > volume)
 					volume = cPower.y;
 
-				/*
-				 * power typically 
-				 */
-
-				// Normalize power
+				// Normalize power. It typically comes in at 20-30 and we want a volume between 0 and 2.
 				volume -= 10;
 				volume /= 20;
 				if (volume > 2)
 					volume = 2;
 
-//				sampleManager.playCurrentSample(volume);
+				sampleManager.playCurrentSample(volume); //volume
 				
-				mLoopPlayer.add(R.raw.clap, 0);
+				mLoopPlayer.add(sampleManager.getCurrentSample(), 0);
 
 				//sampleManager.playSound(R.raw.drum_bass, volume);
 				/*

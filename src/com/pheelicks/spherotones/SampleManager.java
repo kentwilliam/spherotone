@@ -33,7 +33,7 @@ public class SampleManager {
 
 	public SampleManager(){}
 	
-	public void changeSample(int by) {
+	public int changeSample(int by) {
 		Iterator<Integer> it = mAvailableSounds.iterator();
 		int advanceToSample = -1;
 		int prevSample = -1;
@@ -63,6 +63,7 @@ public class SampleManager {
 		currentSample = advanceToSample;
 		//Log.d(LOG_TAG, "Advancing by " + by);
 		//currentSample = currentSampleIndex + by % mSoundPoolMap.size();
+		return currentSample;
 	}
 
 	public void initSounds(Context theContext) { 
@@ -110,4 +111,9 @@ public class SampleManager {
 //			}, 3000);
 		}
 	}
+	
+	public int getCurrentSample() {
+		return currentSample;
+	}
+
 }

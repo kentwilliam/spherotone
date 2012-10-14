@@ -46,14 +46,15 @@ public class LoopPlayer {
 //				{
 //					soundId = R.raw.snarehit;
 //				} 
-					soundId = R.raw.hihat_quick;
+					
+					if (i % 2 == 0)
+						soundId = R.raw.hihat_quick;
 
 					
-					if(i == 0)
-					{
-						soundId = R.raw.drum_kick;
-
-					}
+					//if(i == 0)
+					//{
+					//	soundId = R.raw.drum_kick;
+					//}
 
 				if (soundId != -1)
 				{
