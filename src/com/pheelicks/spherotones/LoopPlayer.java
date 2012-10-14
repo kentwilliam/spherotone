@@ -50,7 +50,7 @@ public class LoopPlayer {
 //				} 
 					
 					if (i % 2 == 0)
-						soundId = R.raw.hihat_slow;
+						soundId = R.raw.maracas;
 
 					
 					//if(i == 0)
