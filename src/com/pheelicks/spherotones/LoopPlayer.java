@@ -34,7 +34,7 @@ public class LoopPlayer {
 	{
 		mContext = context;
 		InputStream audioStream = mContext.getResources().openRawResource(
-				R.raw.drum_bass);
+				R.raw.drum_kick);
 		try 
 		{
 			audioStream.read(mLoopBytes, 0, HEADER_OFFSET);
@@ -50,7 +50,7 @@ public class LoopPlayer {
 //				} 
 					
 					if (i % 2 == 0)
-						soundId = R.raw.hihat_quick;
+						soundId = R.raw.hihat_slow;
 
 					
 					//if(i == 0)

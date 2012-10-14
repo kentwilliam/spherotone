@@ -44,7 +44,7 @@ public class Track
 			}
 			else
 			{
-				a.soundId = R.raw.hihat_medium;
+				a.soundId = R.raw.hihat_slow;
 			}
 
 			mTrackData.put(i * mLoopLength/c, a);
