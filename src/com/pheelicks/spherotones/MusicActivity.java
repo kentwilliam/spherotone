@@ -1,9 +1,12 @@
 package com.pheelicks.spherotones;
 
 import orbotix.robot.base.CollisionDetectedAsyncData;
+import orbotix.robot.base.CollisionDetectedAsyncData.CollisionPower;
 import orbotix.robot.base.ConfigureCollisionDetectionCommand;
 import orbotix.robot.base.DeviceAsyncData;
 import orbotix.robot.base.DeviceMessenger;
+import orbotix.robot.base.FrontLEDOutputCommand;
+import orbotix.robot.base.StabilizationCommand;
 import orbotix.robot.base.DeviceMessenger.AsyncDataListener;
 import orbotix.robot.base.Robot;
 import orbotix.robot.base.RobotProvider;
@@ -50,11 +53,6 @@ public class MusicActivity extends Activity {
 		sampleManager.addSound(R.raw.maracas, 		R.raw.maracas);
 		sampleManager.addSound(R.raw.snarehit, 		R.raw.snarehit);
 
-		sampleManager.playSound(R.raw.drum_kick);
-		sampleManager.playSound(R.raw.drum_kick);
-		sampleManager.playSound(R.raw.drum_kick);
-		sampleManager.playSound(R.raw.drum_kick);
-
         mSpheroConnectionView = (SpheroConnectionView)findViewById(R.id.sphero_connection_view);
         // Set the connection event listener 
         mSpheroConnectionView.setOnRobotConnectionEventListener(new OnRobotConnectionEventListener() {
@@ -76,13 +74,28 @@ public class MusicActivity extends Activity {
 				mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-        				// Start streaming collision detection data
+                        // turn rear light on
+                        FrontLEDOutputCommand.sendCommand(mRobot, 1.0f);
+
+                        // turn stabilization off
+                        StabilizationCommand.sendCommand(mRobot, false);
+
+                        // Start streaming collision detection data
         				//// First register a listener to process the data
         				DeviceMessenger.getInstance().addAsyncDataListener(mRobot,
         						mCollisionListener);
 
         				ConfigureCollisionDetectionCommand.sendCommand(mRobot, ConfigureCollisionDetectionCommand.DEFAULT_DETECTION_METHOD,
-        						45, 45, 100, 100, 50);
+        						15,
+        						15,
+        						15,
+        						15,
+        						20);
+
+        				// register the async data listener
+//                        DeviceMessenger.getInstance().addAsyncDataListener(mRobot, mDataListener);
+  //                      // Start streaming data
+    //                    requestDataStreaming();
                     }
                 }, 1000);
 			}
@@ -113,28 +126,51 @@ public class MusicActivity extends Activity {
 				final CollisionDetectedAsyncData collisionData = (CollisionDetectedAsyncData) asyncData;
 
 				// Update the UI with the collision data
+				String text = "";
 				Acceleration acceleration = collisionData.getImpactAcceleration();
 				Log.d(TAG, "Got collision: (" + acceleration.x + ", " + acceleration.y + ", " + acceleration.z);
 				Direction direction = VectorResolver.resolve3D(acceleration);
-				mTestLabel.setText(direction.description);
+				CollisionPower cPower = collisionData.getImpactPower();
+				float cSpeed = collisionData.getImpactSpeed();
+				text += direction.description + "\n";
+				text += "Power: " + cPower.x + ", " + cPower.y + "\n";
+				text += "Speed: " + cSpeed * 1000 + "\n";
 				
+				// Get top power value
+				float volume = cPower.x;
+				if (cPower.y > volume)
+					volume = cPower.y;
+				
+				/*
+				 * power typically 
+				 */
+				
+				// Normalize power
+				volume -= 10;
+				volume /= 20;
+				if (volume > 2)
+					volume = 2;
+				
+				text += "Volume: " + volume;
+				
+				mTestLabel.setText(text);
+		
 				// Play sound
 				if(direction == Direction.LEFT)
 				{
-					Log.d(TAG, "CLAP");
-					sampleManager.playSound(R.raw.clap);
+					sampleManager.playSound(R.raw.clap, volume);
 				}
 				else if(direction == Direction.RIGHT)
 				{
-					sampleManager.playSound(R.raw.drum_kick);
+					sampleManager.playSound(R.raw.drum_kick, volume);
 				}
 				else if(direction == Direction.FORWARD)
 				{
-					sampleManager.playSound(R.raw.maracas);
+					sampleManager.playSound(R.raw.maracas, volume);
 				}
 				else if(direction == Direction.BACK)
 				{
-					sampleManager.playSound(R.raw.hihat_slow);
+					sampleManager.playSound(R.raw.castanet, volume);
 				}
 			}
 		}

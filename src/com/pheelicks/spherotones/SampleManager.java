@@ -42,12 +42,12 @@ public class SampleManager {
 
 	}
 
-	public void playSound(int index) { 
-		Log.d(LOG_TAG, "playSound");
+	// volume is a number between 0 and 1.
+	public void playSound(int index, float volume) {
 		if(mAvailableSounds.contains(index)){
-			Log.d(LOG_TAG, "contains");
-			int streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC); 
-			int soundId = mSoundPool.play(mSoundPoolMap.get(index), streamVolume, streamVolume, 1, 0, 1f);
+			//int streamVolume = (int) (volume * 2 * mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC)); 
+			//Log.d(LOG_TAG, "Volume " + streamVolume);
+			int soundId = mSoundPool.play(mSoundPoolMap.get(index), volume, volume, 1, 0, 1f);
 
 			mKillSoundQueue.add(soundId);
 
