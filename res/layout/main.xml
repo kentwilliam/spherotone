@@ -11,7 +11,23 @@
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:src="@drawable/snarehit" />
-
+    
+    <Button 
+                android:id="@+id/stop"
+                android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        
+        	android:text="Stop"
+        	android:onClick="stopMusic">
+        	</Button>
+    <Button 
+                android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        	android:layout_toRightOf="@id/stop"
+        	android:text="Start"
+        	android:onClick="startMusic">
+        	</Button>
+    
 </RelativeLayout>
 
     <orbotix.view.connection.SpheroConnectionView

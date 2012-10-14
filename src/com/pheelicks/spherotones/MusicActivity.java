@@ -187,7 +187,7 @@ public class MusicActivity extends Activity {
 				if (volume > 2)
 					volume = 2;	
 				
-				if(volume > 0.33)
+				if(volume > 0.2)
 				{
 					sampleManager.playCurrentSample(volume); //volume
 					mLoopPlayer.add(sampleManager.getCurrentSample(), -1);
@@ -315,4 +315,14 @@ public class MusicActivity extends Activity {
 			SetDataStreamingCommand.sendCommand(mRobot, divisor, packet_frames, mask, response_count);
 		}
 	}
+	
+	public void stopMusic(View v)
+	{
+		mLoopPlayer.stop();
+	}
+	public void startMusic(View v)
+	{
+		mLoopPlayer.start();
+	}
+
 }

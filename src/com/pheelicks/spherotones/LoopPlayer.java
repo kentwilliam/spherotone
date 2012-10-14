@@ -33,47 +33,11 @@ public class LoopPlayer {
 	public LoopPlayer(Context context) 
 	{
 		mContext = context;
-		InputStream audioStream = mContext.getResources().openRawResource(
-				R.raw.drum_kick);
-		try 
-		{
-			audioStream.read(mLoopBytes, 0, HEADER_OFFSET);
-			for (int i = 0; i < BEAT_COUNT; i++) {
-				int soundId = -1;
-//				if (i % 8 == 0 || i % 16 == 10 || i % 16 == 11) 
-//				{
-//					soundId = R.raw.drum_kick;
-//				}
-//				else if (i % 8 == 4) 
-//				{
-//					soundId = R.raw.snarehit;
-//				} 
-					
-					if (i % 2 == 0)
-						soundId = R.raw.maracas;
-
-					
-					//if(i == 0)
-					//{
-					//	soundId = R.raw.drum_kick;
-					//}
-
-				if (soundId != -1)
-				{
-					add(soundId, i * LOOP_LENGTH / BEAT_COUNT);
-				}
-			}
-
-		} 
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
 	}
 	
 	public void add(int resourceId, int offset)
 	{
+		if(!mPlaying)return;
 		int off;
 		if(offset == -1)
 		{
@@ -129,6 +93,35 @@ public class LoopPlayer {
 			@Override
 			public void run() 
 			{
+				// Clear previous
+				mLoopBytes = new byte[LOOP_LENGTH];
+
+				InputStream audioStream = mContext.getResources().openRawResource(
+						R.raw.drum_kick);
+				try 
+				{
+					audioStream.read(mLoopBytes, 0, HEADER_OFFSET);
+					for (int i = 0; i < BEAT_COUNT; i++) {
+						int soundId = -1;
+							
+							if (i % 2 == 0)
+								soundId = R.raw.maracas;
+
+							
+						if (soundId != -1)
+						{
+							add(soundId, i * LOOP_LENGTH / BEAT_COUNT);
+						}
+					}
+
+				} 
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+
+
+				
 				AudioTrack audioTrack = new AudioTrack(
 						AudioManager.STREAM_MUSIC, SAMPLE_RATE,
 						AudioFormat.CHANNEL_CONFIGURATION_MONO,
@@ -174,5 +167,9 @@ public class LoopPlayer {
 
 	public void stop() {
 		mPlaying = false;
+		for(int i = 0; i < LOOP_LENGTH; i++)
+		{
+			mLoopBytes[i]=0;
+		}
 	}
 }
