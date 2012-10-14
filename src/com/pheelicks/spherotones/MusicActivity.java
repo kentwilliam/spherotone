@@ -1,31 +1,27 @@
 package com.pheelicks.spherotones;
 
-import com.pheelicks.spherotones.R;
-
-import android.app.Activity;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.SystemClock;
-import android.util.Log;
-import android.view.View;
-import android.widget.CheckBox;
-import android.widget.TextView;
 import orbotix.robot.base.CollisionDetectedAsyncData;
-import orbotix.robot.base.CollisionDetectedAsyncData.CollisionPower;
 import orbotix.robot.base.ConfigureCollisionDetectionCommand;
+import orbotix.robot.base.DeviceAsyncData;
 import orbotix.robot.base.DeviceMessenger;
 import orbotix.robot.base.DeviceMessenger.AsyncDataListener;
-import orbotix.robot.base.DeviceAsyncData;
 import orbotix.robot.base.Robot;
 import orbotix.robot.base.RobotProvider;
 import orbotix.robot.sensor.Acceleration;
 import orbotix.view.connection.SpheroConnectionView;
 import orbotix.view.connection.SpheroConnectionView.OnRobotConnectionEventListener;
+import android.app.Activity;
+import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 public class MusicActivity extends Activity {
 	private static final String TAG = "MusicActivity";
 	
 	private TextView mTestLabel;
+	private SampleManager sampleManager;
 	private Robot mRobot;	
     private SpheroConnectionView mSpheroConnectionView;
     
@@ -40,6 +36,25 @@ public class MusicActivity extends Activity {
 		mTestLabel = (TextView) findViewById(R.id.test_label);
 		mTestLabel.setText("Hi!");
 		
+		// Set up samples
+		sampleManager = new SampleManager();
+		sampleManager.initSounds(this);
+		sampleManager.addSound(R.raw.castanet,		R.raw.castanet);
+		sampleManager.addSound(R.raw.clap,			R.raw.clap);
+		sampleManager.addSound(R.raw.drum_bass,		R.raw.drum_bass);
+		sampleManager.addSound(R.raw.drum_el,		R.raw.drum_el);
+		sampleManager.addSound(R.raw.drum_kick,		R.raw.drum_kick);
+		sampleManager.addSound(R.raw.hihat_medium,	R.raw.hihat_medium);
+		sampleManager.addSound(R.raw.hihat_quick,	R.raw.hihat_quick);
+		sampleManager.addSound(R.raw.hihat_slow,	R.raw.hihat_slow);
+		sampleManager.addSound(R.raw.maracas, 		R.raw.maracas);
+		sampleManager.addSound(R.raw.snarehit, 		R.raw.snarehit);
+
+		sampleManager.playSound(R.raw.drum_kick);
+		sampleManager.playSound(R.raw.drum_kick);
+		sampleManager.playSound(R.raw.drum_kick);
+		sampleManager.playSound(R.raw.drum_kick);
+
         mSpheroConnectionView = (SpheroConnectionView)findViewById(R.id.sphero_connection_view);
         // Set the connection event listener 
         mSpheroConnectionView.setOnRobotConnectionEventListener(new OnRobotConnectionEventListener() {
@@ -67,7 +82,7 @@ public class MusicActivity extends Activity {
         						mCollisionListener);
 
         				ConfigureCollisionDetectionCommand.sendCommand(mRobot, ConfigureCollisionDetectionCommand.DEFAULT_DETECTION_METHOD,
-        						45, 45, 100, 100, 25);
+        						45, 45, 100, 100, 50);
                     }
                 }, 1000);
 			}
@@ -106,19 +121,20 @@ public class MusicActivity extends Activity {
 				// Play sound
 				if(direction == Direction.LEFT)
 				{
-					// Sound 1
+					Log.d(TAG, "CLAP");
+					sampleManager.playSound(R.raw.clap);
 				}
 				else if(direction == Direction.RIGHT)
 				{
-					// Sound 2
+					sampleManager.playSound(R.raw.drum_kick);
 				}
 				else if(direction == Direction.FORWARD)
 				{
-					// Sound 3
+					sampleManager.playSound(R.raw.maracas);
 				}
 				else if(direction == Direction.BACK)
 				{
-					// Sound 4
+					sampleManager.playSound(R.raw.hihat_slow);
 				}
 			}
 		}
