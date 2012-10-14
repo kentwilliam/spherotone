@@ -20,7 +20,7 @@ public class LoopPlayer {
 			AudioFormat.CHANNEL_CONFIGURATION_MONO,
 			AudioFormat.ENCODING_PCM_16BIT);
 	static final int LOOP_LENGTH = 8 * SAMPLE_RATE;
-	static final int BEAT_COUNT = 12;
+	static final int BEAT_COUNT = 16;
 	static final int HEADER_OFFSET = 0x2C;
 
 	byte[] mLoopBytes = new byte[LOOP_LENGTH];
@@ -77,7 +77,8 @@ public class LoopPlayer {
 		int off;
 		if(offset == -1)
 		{
-			off = ((int)(SAMPLE_SIZE * SAMPLE_RATE * (System.currentTimeMillis() - mStartTime) / 1000) % LOOP_LENGTH);
+			int latency = 0;
+			off = ((int)(SAMPLE_SIZE * SAMPLE_RATE * (System.currentTimeMillis() - latency - mStartTime) / 1000) % LOOP_LENGTH);
 		}
 		else
 		{
@@ -112,7 +113,7 @@ public class LoopPlayer {
 				int a = audioStream.read();
 				if(a == -1)break;
 				int b = mLoopBytes[(off + i) % LOOP_LENGTH];
-				int c = a + b - (a * b)/256;
+				int c = (int)(a + b - (a * b)/256);
 				mLoopBytes[(off + i) % LOOP_LENGTH] = (byte) c;
 			}
 		}

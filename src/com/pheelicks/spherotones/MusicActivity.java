@@ -185,12 +185,14 @@ public class MusicActivity extends Activity {
 				volume -= 10;
 				volume /= 20;
 				if (volume > 2)
-					volume = 2;
-
-				sampleManager.playCurrentSample(volume); //volume
+					volume = 2;	
 				
-				mLoopPlayer.add(sampleManager.getCurrentSample(), -1);
-
+				if(volume > 0.33)
+				{
+					sampleManager.playCurrentSample(volume); //volume
+					mLoopPlayer.add(sampleManager.getCurrentSample(), -1);
+				}
+				//sampleManager.playSound(R.raw.drum_bass, volume);
 				/*
 				if(direction == Direction.LEFT)
 				{
